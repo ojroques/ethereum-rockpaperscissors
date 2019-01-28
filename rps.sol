@@ -35,12 +35,12 @@ contract RockPaperScissors {
         }
     }
 
-    function getOutcome(Moves movaA, Moves movaB) private pure returns (Outcomes) {
-        if (movaA == movaB) {
+    function getOutcome(Moves moveA, Moves moveB) private pure returns (Outcomes) {
+        if (moveA == moveB) {
             return Outcomes.Draw;
-        } else if ((movaA == Moves.Rock     && movaB == Moves.Scissors) ||
-                   (movaA == Moves.Paper    && movaB == Moves.Rock)     ||
-                   (movaA == Moves.Scissors && movaB == Moves.Paper)) {
+        } else if ((moveA == Moves.Rock     && moveB == Moves.Scissors) ||
+                   (moveA == Moves.Paper    && moveB == Moves.Rock)     ||
+                   (moveA == Moves.Scissors && moveB == Moves.Paper)) {
             return Outcomes.PlayerA;
         } else {
             return Outcomes.PlayerB;
@@ -63,17 +63,43 @@ contract RockPaperScissors {
 
         if (movePlayerA != Moves.None && movePlayerB != Moves.None) {
             Outcomes outcome = getOutcome(movePlayerA, movePlayerB);
-            if (outcome == Outcomes.PlayerA) {
-                playerA.transfer(address(this).balance);
-            } else if (outcome == Outcomes.PlayerB) {
-                playerB.transfer(address(this).balance);
-            } else {
-                playerA.transfer(address(this).balance / 2);
-                playerB.transfer(address(this).balance);
-            }
+            pay(outcome);
+            reset();
             return outcome;
         } else {
             return Outcomes.None;
+        }
+    }
+
+    function pay(Outcomes outcome) private {
+        if (outcome == Outcomes.PlayerA) {
+            playerA.call.value(address(this).balance).gas(1000000)("");
+        } else if (outcome == Outcomes.PlayerB) {
+            playerB.call.value(address(this).balance).gas(1000000)("");
+        } else {
+            playerA.call.value(address(this).balance / 2).gas(1000000)("");
+            playerB.call.value(address(this).balance).gas(1000000)("");
+        }
+    }
+
+    function reset() private {
+        playerA = address(0x0);
+        playerB = address(0x0);
+        movePlayerA = Moves.None;
+        movePlayerB = Moves.None;
+    }
+
+    function getContractBalance() public view returns (uint) {
+        return address(this).balance;
+    }
+    
+    function whoAmI() public view returns (uint) {
+        if (msg.sender == playerA) {
+            return 1;
+        } else if (msg.sender == playerB) {
+            return 2;
+        } else {
+            return 0;
         }
     }
 }

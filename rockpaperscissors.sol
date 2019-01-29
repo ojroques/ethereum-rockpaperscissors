@@ -28,8 +28,8 @@ contract RockPaperScissors {
 
     // Bet must be greater than a minimum amount and greater than bet of first player
     modifier validBet() {
-        require((msg.value >= BET_MIN) &&
-                (initialBet == 0 || msg.value >= initialBet));
+        require(msg.value >= BET_MIN);
+        require(initialBet == 0 || msg.value >= initialBet);
         _;
     }
 

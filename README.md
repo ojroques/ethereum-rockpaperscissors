@@ -28,10 +28,26 @@ The contract never stores any of the players' move in clear, but only the hash o
 3. Only when you and your opponent have played, you can reveal your move with `reveal(string memory clearMove)`. The format of the expected input is `"move-passord"`.
 4. When both players have revealed their moves or when the reveal phase has ended, you can get the result and the reward via `getOutcome()`.
 
-A python script is provided to help generate expected inputs from an user choice move and password. The script works only with Python 3+.
+A python script `inputs.py` is provided to help generate expected inputs from an user choice move and password. The script works only with Python 3+.
 
 
 ## Implementation
+
+### Registration Phase
+
+Anyone can register provided that they're not already registered and that their bet is greater than an amount than a fixed minimum, currently at 1 finney. 
+
+When a player has already been registered, a second player wishing to register must place a bet greater than or equal to the bet of that previous player. This is to prevent the strategy of always betting a smaller amount than the oponent and therefore minimizing risks while maximizing profits. Of course there are also no advantages of betting an amount strictly greater than the initial bet, but one should be free to waste his coins however he wants.
+
+## Commit Phase
+
+When a player has been registered successfully, he can play. As described previously, the player provides a hash of the concatenation of a move, represented by an integer, and a secret password. The contract stores this hash and nobody except the player has access to the actual move. Once such a hash has been committed, it cannot be modified.
+
+## Reveal Phase
+
+## Result Phase
+
+## Helper Functions
 
 
 ## Possible Improvements

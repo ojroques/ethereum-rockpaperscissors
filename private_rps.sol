@@ -3,7 +3,8 @@ pragma solidity ^0.5.1;
 contract RockPaperScissors {
 
     uint constant public BET_MIN        = 1 finney;    // The minimum bet
-    uint constant public REVEAL_TIMEOUT = 10 minutes;  // Time allowd for revelation
+    uint constant public REVEAL_TIMEOUT = 10 minutes;  // Max delay of revelation phase
+    uint public initialBet;                            // Bet of first player
     uint private firstReveal;                          // Moment of first reveal
 
     enum Moves {None, Rock, Paper, Scissors}
@@ -25,8 +26,10 @@ contract RockPaperScissors {
     /*************************** REGISTRATION PHASE ***************************/
     /**************************************************************************/
 
+    // Bet must be greater than a minimum amount and greater than bet of first player
     modifier validBet() {
-        require(msg.value >= BET_MIN);
+        require((msg.value >= BET_MIN) &&
+                (initialBet == 0 || msg.value >= initialBet));
         _;
     }
 
@@ -39,7 +42,8 @@ contract RockPaperScissors {
     // Return player's ID upon successful registration.
     function register() public payable validBet notAlreadyRegistered returns (uint) {
         if (playerA == address(0x0)) {
-            playerA = msg.sender;
+            playerA    = msg.sender;
+            initialBet = msg.value;
             return 1;
         } else if (playerB == address(0x0)) {
             playerB = msg.sender;
@@ -149,14 +153,16 @@ contract RockPaperScissors {
 
         address payable addrA = playerA;
         address payable addrB = playerB;
+        uint betPlayerA       = initialBet;
         reset();  // Reset game before paying to avoid reentrancy attacks
-        pay(addrA, addrB, outcome);
+        pay(addrA, addrB, betPlayerA, outcome);
 
         return outcome;
     }
 
     // Pay the winner(s).
-    function pay(address payable addrA, address payable addrB, Outcomes outcome) private {
+    function pay(address payable addrA, address payable addrB, uint betPlayerA, Outcomes outcome) private {
+        // Uncomment lines below if you need to adjust the gas limit
         if (outcome == Outcomes.PlayerA) {
             addrA.transfer(address(this).balance);
             // addrA.call.value(address(this).balance).gas(1000000)("");
@@ -164,15 +170,16 @@ contract RockPaperScissors {
             addrB.transfer(address(this).balance);
             // addrB.call.value(address(this).balance).gas(1000000)("");
         } else {
-            addrA.transfer(address(this).balance / 2);
+            addrA.transfer(betPlayerA);
             addrB.transfer(address(this).balance);
-            // addrA.call.value(address(this).balance / 2).gas(1000000)("");
+            // addrA.call.value(betPlayerA).gas(1000000)("");
             // addrB.call.value(address(this).balance).gas(1000000)("");
         }
     }
 
     // Reset the game.
     function reset() private {
+        initialBet      = 0;
         firstReveal     = 0;
         playerA         = address(0x0);
         playerB         = address(0x0);

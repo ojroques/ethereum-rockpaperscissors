@@ -18,7 +18,7 @@ This smart contract implements a secure Rock-Paper-Scissors game. This contract 
 4. When both player have revealed their move, the contract determines the winner and sends him/her the total betting pool. If there is a draw, each player gets their bet back.
 5. The game resets and can be played again by different players.
 
-The contract never stores any of the players' move in clear, but only the hash of the move salted with a password only known to the player. Since a player cannot change his/her move during the reveal phase, this effectively ensures that an oponent could not cheat by looking at transaction data and playing accordingly. The implementation is detailed more thoroughly [here](#implementation).
+The contract never stores any of the players' move in clear, but only the hash of the move salted with a password only known to the player. Since a player cannot change his/her move during the reveal phase, this effectively ensures that an opponent could not cheat by looking at transaction data and playing accordingly. The implementation is detailed more thoroughly [here](#implementation).
 
 
 ## Usage
@@ -37,7 +37,7 @@ A python script `inputs.py` is provided to help generate expected inputs from an
 
 Anyone can register provided that they're not already registered and that their bet is greater than an amount than a fixed minimum, currently at 1 finney. 
 
-When a player has already been registered, a second player wishing to register must place a bet greater than or equal to the bet of that previous player. This is to prevent the strategy of always betting a smaller amount than the oponent and therefore minimizing risks while maximizing profits. Of course there are also no advantages of betting an amount strictly greater than the initial bet, but one should be free to waste his coins however he wants.
+When a player has already been registered, a second player wishing to register must place a bet greater than or equal to the bet of that previous player. This is to prevent the strategy of always betting a smaller amount than the opponent and therefore minimizing risks while maximizing profits. Of course there are also no advantages of betting an amount strictly greater than the initial bet, but one should be free to waste his coins however he wants.
 
 ## Commit Phase
 
@@ -45,9 +45,23 @@ When a player has been registered successfully, he can play. As described previo
 
 ## Reveal Phase
 
+The reveal phase begins when both player have committed their moves. A player reveals what he had played by sending `move-password`. The contract then checks if its indeed the move that was played by hashing it and comparing the result to the stored hash. If they're equal, the first character of the string (`move`, an integer) is saved and the contract waits for the second player to reveal its move.
+
+They are two ways for the reveal phase to end: either the two players have revealed their moves or the second fails to submit its move before the phase ends. Currently, the reveal phase begins when one of the player reveals its move and lasts 10 minutes. This is to prevent a deadlock when the second player realizes he has lost and does not bother to finish the game.
+
 ## Result Phase
 
+When the reveal phase ends, any of the player can trigger the function `getOutcome()` to make the contract send the rewards. The winner, if there is any, takes it all. In case of a draw, player get their bets back. A player that has not previously revealed its move has automatically lost.
+
+Just before sending the coins, the contract resets the state of the game. This is done is this order to prevent potential [reentrancy attack].
+
 ## Helper Functions
+
+At any time, players can use helper functions to get information about the state of the game. Functions available are:
+* `getContractBalance()` to see the current value of the betting pool.
+* `whoAmI()` to see which their player's id: 1 or 2 if they are indeed registered or 0 if they're not.
+* `bothPlayer()` returns `true` if both players have played and that they're now able to go to the reveal phase.
+* `revealTimeLeft()` returns `0` if the timer of the reveal phase has not started yet, the time left 
 
 
 ## Possible Improvements

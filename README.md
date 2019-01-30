@@ -5,6 +5,11 @@
 * [Description](#description)
 * [Usage](#usage)
 * [Implementation](#implementation)
+    * [Registration Phase](#registration-phase)
+    * [Commit Phase](#commit-phase)
+    * [Reveal Phase](#reveal-phase)
+    * [Result Phase](#result-phase)
+    * [Helper Functions](#helper-functions)
 * [Screenshots](#screenshots)
 
 
@@ -70,7 +75,7 @@ Functions available are:
 
 Public state variables are:
 * `BET_MIN`: the minimal amount to be sent to the contract in order to register. Currently set to 1 finney.
-* `REVEAL_TIMEOUT`: the duration of the reveal phase. Currently set to 10 minutes.
+* `REVEAL_TIMEOUT`: the duration of the reveal phase in seconds. Currently set to 10 minutes (600 seconds).
 * `initial_bet`: the bet of the first player registered. The second player must place a bet greater than or equal to that amount.
 
 

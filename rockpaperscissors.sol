@@ -222,8 +222,8 @@ contract RockPaperScissors {
     // Return time left before the end of the revelation phase.
     function revealTimeLeft() public view returns (int) {
         if (firstReveal != 0) {
-            return int((REVEAL_TIMEOUT + firstReveal) - now);
+            return int((firstReveal + REVEAL_TIMEOUT) - now);
         }
-        return 0;
+        return REVEAL_TIMEOUT;
     }
 }

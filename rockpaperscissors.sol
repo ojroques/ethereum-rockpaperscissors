@@ -224,6 +224,6 @@ contract RockPaperScissors {
         if (firstReveal != 0) {
             return int((firstReveal + REVEAL_TIMEOUT) - now);
         }
-        return REVEAL_TIMEOUT;
+        return int(REVEAL_TIMEOUT);
     }
 }

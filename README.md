@@ -10,7 +10,6 @@
     * [Reveal Phase](#reveal-phase)
     * [Result Phase](#result-phase)
     * [Helper Functions](#helper-functions)
-* [Screenshots](#screenshots)
 
 
 ## Description
@@ -28,21 +27,29 @@ The contract never stores any of the players' move in clear, but only the hash o
 ## Usage
 
 1. Register with function `register()`. You must send a bet greater than or equal to both the minimum `BET_MIN` and to the first player's bet (if defined).
+![register](images/register.png)
 2. Commit a move with function `play(bytes32 encrMove)`. The format of the expected input is `"0xHASH"` where `HASH` is the sha256 hash of a string `move-password`. `move`is an integer ranging from 1 to 3 which correspond to rock, paper and scissors respectively and `password` is a string that should be kept secret.
+![play](images/play.png)
 3. Only when you and your opponent have played, you can reveal your move with `reveal(string memory clearMove)`. The format of the expected input is `"move-passord"`.
+![reveal](images/reveal.png)
 4. When both players have revealed their moves or when the reveal phase has ended, you can get the result and the reward via `getOutcome()`.
+![result](images/result.png)
+
+In the example, player A and player B (who own 100 ethers each) have bet 10 ethers. Player A played rock while player B chose scissors. At the end of the game, player A won his bet back and the bet of his opponent.
+![reveal](images/gains.png)
 
 A python script `inputs.py` is provided to help generate expected inputs from an user choice move and password. The script works only with Python 3+. To use it, run:
 ```sh
 python3 inputs.py
 ```
+![script](images/script.png)
 
 
 ## Implementation
 
 ### Registration Phase
 
-Anyone can register provided that they're not already registered and that their bet is greater than an amount than a fixed minimum, currently 1 finney. 
+Anyone can register provided that they're not already registered and that their bet is greater than an amount than a fixed minimum, currently 1 finney.
 
 When a player has already been registered, a second player wishing to register must place a bet greater than or equal to the bet of that previous player. This is to prevent the strategy of always betting a smaller amount than the opponent and therefore minimizing risks while maximizing gains. Of course there are no advantages of betting an amount strictly greater than the initial bet, but one should be free to waste his coins however he wants.
 
@@ -64,7 +71,7 @@ Just before sending the coins, the contract resets the state of the game. This i
 
 ## Helper Functions
 
-At any time, players have access to public state variables and helper functions to get information about the state of the game. 
+At any time, players have access to public state variables and helper functions to get information about the state of the game.
 
 Functions available are:
 * `getContractBalance()` to see the current value of the betting pool.
@@ -77,6 +84,3 @@ Public state variables are:
 * `BET_MIN`: the minimal amount to be sent to the contract in order to register. Currently set to 1 finney.
 * `REVEAL_TIMEOUT`: the duration of the reveal phase in seconds. Currently set to 10 minutes (600 seconds).
 * `initial_bet`: the bet of the first player registered. The second player must place a bet greater than or equal to that amount.
-
-
-## Screenshots

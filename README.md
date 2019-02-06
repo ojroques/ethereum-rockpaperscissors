@@ -33,7 +33,7 @@ This assumes that the hash function used is both preimage resistant  and second-
 
 1. Register with function `register()`. You must send a bet greater than or equal to both the minimum `BET_MIN` and to the first player's bet (if defined).
 ![register](images/register.png)
-2. Commit a move with function `play(bytes32 encrMove)`. The format of the expected input is `"0xHASH"` where `HASH` is the sha256 hash of a string `move-password`. `move` is an integer ranging from 1 to 3 which correspond to rock, paper and scissors respectively and `password` is a string that should be kept secret.
+2. Commit a move with function `play(bytes32 encrMove)`. The format of the expected input is `"0xHASH"` where `HASH` is the SHA256 hash of a string `move-password`. `move` is an integer ranging from 1 to 3 which correspond to rock, paper and scissors respectively and `password` is a string that should be kept secret.
 ![play](images/play.png)
 3. Only when you and your opponent have played, you can reveal your move with `reveal(string memory clearMove)`. The format of the expected input is `"move-passord"`.
 ![reveal](images/reveal.png)
@@ -43,7 +43,7 @@ This assumes that the hash function used is both preimage resistant  and second-
 In the screenshots, player A and player B (who initially own 100 ethers each) have bet 10 ethers. Player A played rock while player B chose scissors. At the end of the game, player A won the total contract's balance.
 ![reveal](images/gains.png)
 
-A python script `inputs.py` is included to help generate expected inputs from an user choice move and password. The script works only with Python 3+. To use it, run:
+A python script `inputs.py` is included to help generate expected inputs from an user's choice of a move and a password. The script works only with Python 3+. To use it, run:
 ```sh
 python3 inputs.py
 ```
@@ -60,7 +60,7 @@ If a player has already been registered, a second player wishing to register mus
 
 ## Commit Phase
 
-When a player has been registered successfully, he/her can play. As described previously, the player provides a sha256 hash of the concatenation of a move, represented by an integer, and a secret password. The contract stores this hash and nobody except the player has access to the actual move. Once such a hash has been committed, it cannot be modified.
+When a player has been registered successfully, he/her can play. As described previously, the player provides a SHA256 hash of the concatenation of a move, represented by an integer, and a secret password. The contract stores this hash and nobody except the player has access to the actual move. Once such a hash has been committed, it cannot be modified.
 
 ## Reveal Phase
 

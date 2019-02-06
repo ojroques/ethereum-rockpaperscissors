@@ -197,7 +197,7 @@ contract RockPaperScissors {
     function getContractBalance() public view returns (uint) {
         return address(this).balance;
     }
-    
+
     // Return player's ID
     function whoAmI() public view returns (uint) {
         if (msg.sender == playerA) {

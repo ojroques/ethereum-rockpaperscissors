@@ -3,7 +3,7 @@
 ## Contents
 
 * [Description](#description)
-    * [Threat Model Description](#threat-model-description)
+    * [Threat Model](#threat-model)
 * [Usage](#usage)
 * [Implementation](#implementation)
     * [Registration Phase](#registration-phase)
@@ -22,16 +22,18 @@ This smart contract implements a secure Rock-Paper-Scissors game. The game follo
 4. When both player have revealed their move, the contract determines the winner and sends him/her the total betting pool. If there is a draw, each player gets their bet back.
 5. The game resets and can be played again by new players.
 
-### Threat Model Description
+### Threat Model
 
 This contract is *secure* in the sense that a player who has access to the blockchain and its content would still not be able to guess another player's move. Indeed the contract never stores any of the players' move in clear, but only the hash of the move salted with a password only known to the player. Since players cannot change their move during the reveal phase (after they have both committed their choice), this effectively ensures that an opponent could not cheat by looking at transaction data and playing accordingly.
+
+This assumes that the hash function used is both preimage resistant  and second-preimage resistant. But for the hash used, SHA256, no one has managed to break pre and second image resistance yet.
 
 
 ## Usage
 
 1. Register with function `register()`. You must send a bet greater than or equal to both the minimum `BET_MIN` and to the first player's bet (if defined).
 ![register](images/register.png)
-2. Commit a move with function `play(bytes32 encrMove)`. The format of the expected input is `"0xHASH"` where `HASH` is the sha256 hash of a string `move-password`. `move`is an integer ranging from 1 to 3 which correspond to rock, paper and scissors respectively and `password` is a string that should be kept secret.
+2. Commit a move with function `play(bytes32 encrMove)`. The format of the expected input is `"0xHASH"` where `HASH` is the sha256 hash of a string `move-password`. `move` is an integer ranging from 1 to 3 which correspond to rock, paper and scissors respectively and `password` is a string that should be kept secret.
 ![play](images/play.png)
 3. Only when you and your opponent have played, you can reveal your move with `reveal(string memory clearMove)`. The format of the expected input is `"move-passord"`.
 ![reveal](images/reveal.png)

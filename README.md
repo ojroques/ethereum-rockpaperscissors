@@ -15,7 +15,7 @@
 
 ## Description
 
-This smart contract implements a secure Rock-Paper-Scissors game. The game follows these steps:
+This smart contract implements a secure Rock-Paper-Scissors game in [Solidity](https://solidity.readthedocs.io/en/v0.5.3/index.html), ready to be deployed on the Ethereum blockchain. The game follows these steps:
 1. Two players register and place a bet.
 2. Each participant picks a move and a password. They send the hash of the concatenated string to the contract which stores it.
 3. When the two players have committed their moves, they reveal what they have played. To do so, they send their move and password in clear. The contract verifies that the hash of the received input matches the one stored.

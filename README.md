@@ -60,7 +60,7 @@ If a player has already been registered, a second player wishing to register mus
 
 ## Commit Phase
 
-When a player has been registered successfully, he/her can play. As described previously, the player provides a SHA256 hash of the concatenation of a move, represented by an integer, and a secret password. The contract stores this hash and nobody except the player has access to the actual move. Once such a hash has been committed, it cannot be modified.
+When a player has been registered successfully, he/she can play. As described previously, the player provides a SHA256 hash of the concatenation of a move, represented by an integer, and a secret password. The contract stores this hash and nobody except the player has access to the actual move. Once such a hash has been committed, it cannot be modified.
 
 ## Reveal Phase
 

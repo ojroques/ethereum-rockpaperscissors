@@ -1,8 +1,10 @@
-pragma solidity ^0.5.1;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.17;
 
 contract RockPaperScissors {
 
-    uint constant public BET_MIN        = 1 finney;    // The minimum bet
+    uint constant public BET_MIN        = 1e16;        // The minimum bet (1 finney)
     uint constant public REVEAL_TIMEOUT = 10 minutes;  // Max delay of revelation phase
     uint public initialBet;                            // Bet of first player
     uint private firstReveal;                          // Moment of first reveal
@@ -42,11 +44,11 @@ contract RockPaperScissors {
     // Return player's ID upon successful registration.
     function register() public payable validBet notAlreadyRegistered returns (uint) {
         if (playerA == address(0x0)) {
-            playerA    = msg.sender;
+            playerA    = payable(msg.sender);
             initialBet = msg.value;
             return 1;
         } else if (playerB == address(0x0)) {
-            playerB = msg.sender;
+            playerB = payable(msg.sender);
             return 2;
         }
         return 0;
@@ -105,7 +107,7 @@ contract RockPaperScissors {
 
         // Timer starts after first revelation from one of the player
         if (firstReveal == 0) {
-            firstReveal = now;
+            firstReveal = block.timestamp;
         }
 
         return move;
@@ -113,7 +115,7 @@ contract RockPaperScissors {
 
     // Return first character of a given string.
     function getFirstChar(string memory str) private pure returns (uint) {
-        byte firstByte = bytes(str)[0];
+        bytes1 firstByte = bytes(str)[0];
         if (firstByte == 0x31) {
             return 1;
         } else if (firstByte == 0x32) {
@@ -131,7 +133,7 @@ contract RockPaperScissors {
 
     modifier revealPhaseEnded() {
         require((movePlayerA != Moves.None && movePlayerB != Moves.None) ||
-                (firstReveal != 0 && now > firstReveal + REVEAL_TIMEOUT));
+                (firstReveal != 0 && block.timestamp > firstReveal + REVEAL_TIMEOUT));
         _;
     }
 
@@ -181,8 +183,8 @@ contract RockPaperScissors {
     function reset() private {
         initialBet      = 0;
         firstReveal     = 0;
-        playerA         = address(0x0);
-        playerB         = address(0x0);
+        playerA         = payable(address(0x0));
+        playerB         = payable(address(0x0));
         encrMovePlayerA = 0x0;
         encrMovePlayerB = 0x0;
         movePlayerA     = Moves.None;
@@ -222,7 +224,7 @@ contract RockPaperScissors {
     // Return time left before the end of the revelation phase.
     function revealTimeLeft() public view returns (int) {
         if (firstReveal != 0) {
-            return int((firstReveal + REVEAL_TIMEOUT) - now);
+            return int((firstReveal + REVEAL_TIMEOUT) - block.timestamp);
         }
         return int(REVEAL_TIMEOUT);
     }

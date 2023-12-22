@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 
 contract RockPaperScissors {
 
-    uint constant public BET_MIN        = 1e16;        // The minimum bet (1 finney)
+    uint constant public BET_MIN        = 1e15;        // The minimum bet (1 finney)
     uint constant public REVEAL_TIMEOUT = 10 minutes;  // Max delay of revelation phase
     uint public initialBet;                            // Bet of first player
     uint private firstReveal;                          // Moment of first reveal
